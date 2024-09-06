@@ -5,9 +5,9 @@ The focus of this assignment is to take your matrix multiplication from Assignme
 The focus of this lab is to provide tools for debugging OpenCL applications on device.
 
 ### Pocl
-This portion of the lab is to be an introduction to the debugging tool POCL.  For the steps for this lab, see `./lab/pocl/README.md`.
+This portion of the lab is to be an introduction to the dembugging tool POCL.  For the steps for this lab, see `./lab/pocl/README.md`.
 
-## Homework
+## Homework 
 The goal of this is to accelerate your matrix multiply from Assignment 2.  You may directly use code from the previous assignment here.
 
 ### OpenCL Naive MM

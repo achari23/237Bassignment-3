@@ -19,7 +19,8 @@ solution: ../../helper_lib/helper_lib.a main.c
 
 ../../helper_lib/helper_lib.a: 
 	cd ../../helper_lib; make
-
+test: solution
+	./solution Dataset/0/input0.raw Dataset/0/input1.raw Dataset/0/output.raw output.raw
 run: solution
 	./solution Dataset/0/input0.raw Dataset/0/input1.raw Dataset/0/output.raw output.raw
 	./solution Dataset/1/input0.raw Dataset/1/input1.raw Dataset/1/output.raw output.raw

@@ -16,7 +16,7 @@ In `lib/CL/devices/pthread/pthread_scheduler.c`, update line 712 to be `#if defi
 pkg install llvmgold
 mkdir build
 cd build
-unset LD_LIBRARY_PATH
+unset LD_LIBRARY_PATH 
 export LDFLAGS=" -llog"
 export CFLAGS=" -U__ANDROID__"
 cmake -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_BUILD_TYPE=Debug ..
