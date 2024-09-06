@@ -5,13 +5,12 @@ __kernel void matrixMultiply(
     const unsigned int numCRows, const unsigned int numCColumns) {
   //@@ Insert code to implement matrix multiplication here
   
-  int g_row = get_global_id(1); // rows of result
-  int g_col = get_global_id(0); // columns of result
+  int g_row = get_global_id(0); // rows of result
+  int g_col = get_global_id(1); // columns of result
 
-  float value = 0.0;
+  float value = 0.0f;
   for(int i = 0; i < numBRows; i++) {
-    value += A[i*numARows + g_row] * B[g_col*numBRows + i];
+    value += A[g_row*numAColumns + i] * B[i*numBColumns + g_col];
   }
-  C[g_col*numARows + g_row] = value;
+  C[g_row*numBColumns + g_col] = value;
 }
-

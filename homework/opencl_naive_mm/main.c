@@ -159,13 +159,13 @@ int main(int argc, char *argv[])
     host_c.shape[1] = cols;
     host_c.data = (float *)malloc(sizeof(float) * host_c.shape[0] * host_c.shape[1]);
     
-    PrintMatrix(&host_a);
-    PrintMatrix(&host_b);
+    //PrintMatrix(&host_a);
+    //PrintMatrix(&host_b);
     // Call your matrix multiply.
     OpenCLMatrixMultiply(&host_a, &host_b, &host_c);
 
     // // Call to print the matrix
-    PrintMatrix(&host_c);
+   // PrintMatrix(&host_c);
     
     // Save the matrix
     SaveMatrix(input_file_d, &host_c);
