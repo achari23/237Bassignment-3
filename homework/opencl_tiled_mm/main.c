@@ -4,7 +4,7 @@
 #include "device.h"
 #include "kernel.h"
 #include "matrix.h"
-
+#define BLOCKSIZE 4
 #define CHECK_ERR(err, msg)                           \
     if (err != CL_SUCCESS)                            \
     {                                                 \
@@ -60,9 +60,27 @@ void OpenCLMatrixMultiply(Matrix *input0, Matrix *input1, Matrix *result)
     kernel = clCreateKernel(program, "matrixMultiply", &err);
     CHECK_ERR(err, "clCreateKernel");
 
-    //@@ Allocate GPU memory here
-
+      //@@ Allocate GPU memory here
+    size_t size_a = sizeof(float) * input0->shape[0] * input0->shape[1];
+    size_t size_b = sizeof(float) * input1->shape[0] * input1->shape[1];
+    size_t size_c = sizeof(float) * input0->shape[0] * input1->shape[1];
+    device_a = clCreateBuffer(context,CL_MEM_READ_ONLY, size_a, NULL, &err );
+    CHECK_ERR(err, "clCreateBuffer device a");
+    device_b = clCreateBuffer(context,CL_MEM_READ_ONLY, size_b, NULL, &err );
+    CHECK_ERR(err, "clCreateBuffer device b");
+    device_c = clCreateBuffer(context,CL_MEM_WRITE_ONLY, size_c, NULL, &err );
+    CHECK_ERR(err, "clCreateBuffer device c");
     //@@ Copy memory to the GPU here
+    err = clEnqueueWriteBuffer(queue, device_a, CL_TRUE ,0, size_a, input0->data, 0, NULL, NULL);
+    CHECK_ERR(err, "clEnqueueWriteBuffer device a");
+    err = clEnqueueWriteBuffer(queue, device_b, CL_TRUE,0, size_b, input1->data, 0, NULL, NULL);
+    CHECK_ERR(err, "clEnqueueWriteBuffer device b");
+
+    int blockSize = 1;
+    
+    int row0 = input0->shape[0]; 
+    int col0 = input0->shape[1];
+    int col1 = input1->shape[1];
 
     // Set the arguments to our compute kernel
     // __global const float *A, __global const float *B, __global float *C,
@@ -88,13 +106,29 @@ void OpenCLMatrixMultiply(Matrix *input0, Matrix *input1, Matrix *result)
     err |= clSetKernelArg(kernel, 8, sizeof(unsigned int), &result->shape[1]);
     CHECK_ERR(err, "clSetKernelArg 8");
 
+
+ 
     // @@ define local and global work sizes
-
+    size_t local[2];
+    local[0] = 1;
+    local[1] = 1;
+    size_t global[2];
+    global[0] = input0->shape[0];
+    global[1] = input1->shape[1];
     //@@ Launch the GPU Kernel here
-
+    err = clEnqueueNDRangeKernel(queue, kernel, 2, NULL, global, local,0, NULL, NULL);
+    CHECK_ERR(err, "clEnqueueNDRangeKernel");
     //@@ Copy the GPU memory back to the CPU here
-
+    err = clEnqueueReadBuffer(queue, device_c, CL_TRUE ,0, size_c, result->data, 0, NULL, NULL);
+    CHECK_ERR(err, "clEnqueueReadBuffer device c");
     //@@ Free the GPU memory here
+    clReleaseMemObject(device_a);
+    clReleaseMemObject(device_b);
+    clReleaseMemObject(device_c);
+    clReleaseProgram(program);
+    clReleaseKernel(kernel); 
+    clReleaseCommandQueue(queue); 
+    clReleaseContext(context);
 }
 
 int main(int argc, char *argv[])
@@ -127,7 +161,8 @@ int main(int argc, char *argv[])
     int rows, cols;
     //@@ Update these values for the output rows and cols of the output
     //@@ Do not use the results from the answer matrix
-
+    rows = host_a.shape[0];
+    cols = host_b.shape[0];
     // Allocate the memory for the target.
     host_c.shape[0] = rows;
     host_c.shape[1] = cols;
