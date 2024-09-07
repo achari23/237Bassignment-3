@@ -17,14 +17,14 @@ __kernel void matrixMultiply(
   int col = g_row * TILE_WIDTH + l_row;
   float result = 0;
   for (int m = 0; m < numBRows / TILE_WIDTH; m++) {
-    Atile[l_col][l_row] = A[(row * numBRows) + (m * TILE_WIDTH) + l_row];
-    Btile[l_col][l_row] = B[(((m * TILE_WIDTH) + l_col) * numBRows) + col];
+    Atile[l_col][l_row] = A[(row * numARows) + (m * TILE_WIDTH) + l_row];
+    Btile[l_col][l_row] = B[(((m * TILE_WIDTH) + l_col) * numBColumns) + col];
     barrier(CLK_LOCAL_MEM_FENCE); 
     for (int t = 0; t < TILE_WIDTH; t++) {
       result += Atile[l_col][t] * Btile[t][l_row];
     }
     barrier(CLK_LOCAL_MEM_FENCE); 
   }
-  C[(row * numBRows) + col] = result;
+  C[(row * numBColumns) + col] = result;
 }
 
