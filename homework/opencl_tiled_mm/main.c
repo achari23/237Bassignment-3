@@ -106,7 +106,6 @@ void OpenCLMatrixMultiply(Matrix *input0, Matrix *input1, Matrix *result)
     err |= clSetKernelArg(kernel, 8, sizeof(unsigned int), &result->shape[1]);
     CHECK_ERR(err, "clSetKernelArg 8");
 
-
  
     // @@ define local and global work sizes
     size_t local[2];
@@ -172,7 +171,9 @@ int main(int argc, char *argv[])
     OpenCLMatrixMultiply(&host_a, &host_b, &host_c);
 
     // // Call to print the matrix
-    // PrintMatrix(&host_c);
+    //PrintMatrix(&host_a);
+    //PrintMatrix(&host_b);
+    //PrintMatrix(&host_c);
 
     // Save the matrix
     SaveMatrix(input_file_d, &host_c);
